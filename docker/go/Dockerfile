@@ -4,14 +4,15 @@ ENV ROOT=/go/src/app
 ENV CGO_ENABLED 0
 WORKDIR ${ROOT}
 
-RUN apk update && apk add git
-#COPY go.mod go.sum ./
-COPY go.mod ./
+RUN apk update && apk add git && \
+    go get -u github.com/cosmtrek/air && \
+    go build -o /go/bin/air github.com/cosmtrek/air
+
+COPY go.mod go.sum ./
 RUN go mod download
 EXPOSE 8080
 
-CMD ["go", "run", "main.go"]
-
+CMD ["air", "-c", ".air.toml"]
 
 FROM golang:1.15.7-alpine as builder
 

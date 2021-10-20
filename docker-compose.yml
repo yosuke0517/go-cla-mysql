@@ -39,5 +39,6 @@ services:
       - .:/go/src/app
     ports:
       - "8080:8080"
+      - "2345:2345"
     depends_on:
       - db
