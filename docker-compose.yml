@@ -36,9 +36,16 @@ services:
     tty: true
     stdin_open: true
     volumes:
-      - .:/go/src/app
+      - ./:/go/app
+    command: air
     ports:
       - "8080:8080"
       - "2345:2345"
+    # Docker上で delveを利用する為の設定
+    security_opt:
+      - apparmor:unconfined
+    # Docker上で delveを利用する為の設定
+    cap_add:
+      - SYS_PTRACE
     depends_on:
       - db

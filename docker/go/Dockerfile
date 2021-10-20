@@ -1,22 +1,41 @@
-FROM golang:1.15.7-alpine as dev
+FROM golang:1.17-alpine3.14 as dev
 
-ENV ROOT=/go/src/app
+LABEL maintainer="https://github.com/yosuke0517"
+
+WORKDIR /go/app
+
+COPY . .
+
+ARG AIR_VERSION=v1.27.3
+ARG DLV_VERSION=v1.7.1
+
+RUN set -eux && \
+  apk update && \
+  apk add --no-cache git curl make && \
+  go install github.com/cosmtrek/air@${AIR_VERSION} && \
+  go install github.com/go-delve/delve/cmd/dlv@${DLV_VERSION}
+
+RUN set -eux && \
+  go build -o go-cla-mysql ./main.go
+
 ENV CGO_ENABLED 0
-WORKDIR ${ROOT}
 
-RUN apk update && apk add git && \
-    go get -u github.com/cosmtrek/air && \
-    go build -o /go/bin/air github.com/cosmtrek/air
+FROM alpine:3.14
 
-COPY go.mod go.sum ./
-RUN go mod download
-EXPOSE 8080
+WORKDIR /app
 
-CMD ["air", "-c", ".air.toml"]
+COPY --from=build /go/app/go-cla-mysql .
+
+RUN set -x && \
+  addgroup go && \
+  adduser -D -G go go && \
+  chown -R go:go /app/go-cla-mysql
+
+CMD ["./go-cla-mysql"]
 
 FROM golang:1.15.7-alpine as builder
 
-ENV ROOT=/go/src/app
+ENV ROOT=/go/app
 WORKDIR ${ROOT}
 
 RUN apk update && apk add git
@@ -29,9 +48,9 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o $ROOT/binary
 
 FROM scratch as prod
 
-ENV ROOT=/go/src/app
+ENV ROOT=/go/app
 WORKDIR ${ROOT}
 COPY --from=builder ${ROOT}/binary ${ROOT}
 
 EXPOSE 8080
-CMD ["/go/src/app/binary"]
+CMD ["/go/app/binary"]
