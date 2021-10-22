@@ -13,6 +13,9 @@ func HealthCheckController() echo.HandlerFunc {
 
 func HelloController() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		return c.JSON(http.StatusOK, "Hello")
+		jsonMap := map[string]string{
+			"hello": "Hello",
+		}
+		return c.JSON(http.StatusOK, jsonMap)
 	}
 }
