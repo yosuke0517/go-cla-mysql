@@ -1,11 +1,15 @@
 package repository
 
-import "go-cla-mysql/entities/model"
+import (
+	"context"
+	"go-cla-mysql/entities/model"
+)
 
 // todoのCRUDに対するDB用のリポジトリ（ポート）
 type TodoRepository interface {
-	FindAll(max int) (todos []*model.Todo, err error)
-	FindByID(id int) (todos []*model.Todo, err error)
-	Create(todo *model.Todo) (*model.Todo, error)
-	Update(todo *model.Todo) (*model.Todo, error)
+	// TODO 共通化できる？？
+	FindAll(ctx context.Context, max int) (todos []*model.Todo, err error)
+	FindByID(ctx context.Context, id int) (todos *model.Todo, err error)
+	Create(ctx context.Context, todo *model.Todo) (*model.Todo, error)
+	Update(ctx context.Context, todo *model.Todo) (*model.Todo, error)
 }
