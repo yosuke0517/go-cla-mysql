@@ -7,3 +7,4 @@ type Todo struct {
 	LimitDate string `json:"limitDate"`
 	Status    bool   `json:"status"`
 }
+type Todos []Todo
