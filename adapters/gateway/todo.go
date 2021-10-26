@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"go-cla-mysql/entities/model"
+	"go-cla-mysql/infratructure/db"
 	"go-cla-mysql/usecases/repository"
 	"log"
 )
@@ -16,26 +17,25 @@ repositoryにて宣言されたメソッドを実装します.
 */
 
 type TodoGateway struct {
-	conn *sql.DB
+	conn db.SqlHandler
 }
 
 // NewTodoGateway はTodoGatewayを返します．
 // memo: 返り値の設定をrepository.TodoRepositoryにします.
 // NewTodoGatewayを呼ぶ際、引数connにmockを渡せばテストが可能になります.
-func NewTodoGateway(conn *sql.DB) repository.TodoRepository {
+func NewTodoGateway(handler db.SqlHandler) repository.TodoRepository {
 	return &TodoGateway{
-		conn: conn,
+		conn: handler,
 	}
 }
 
 // GetDBConn はconnectionを取得します．
-func (t *TodoGateway) GetDBConn() *sql.DB {
+func (t *TodoGateway) GetDBConn() db.SqlHandler {
 	return t.conn
 }
 
 func (t TodoGateway) FindAll(max int) (*model.Todos, error) {
-	conn := t.GetDBConn()
-	rows, err := conn.Query("SELECT * FROM `todo`")
+	rows, err := t.conn.Conn.Query("SELECT * FROM `todo`")
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, fmt.Errorf("Todo is not registered")
@@ -53,8 +53,7 @@ func (t TodoGateway) FindAll(max int) (*model.Todos, error) {
 }
 
 func (t TodoGateway) FindByID(ctx context.Context, id int) (*model.Todo, error) {
-	conn := t.GetDBConn()
-	row := conn.QueryRowContext(ctx, "SELECT * FROM `todo` WHERE id=?", id)
+	row := t.conn.Conn.QueryRowContext(ctx, "SELECT * FROM `todo` WHERE id=?", id)
 	todo := model.Todo{}
 	err := row.Scan(&todo.ID, &todo.Task, &todo.LimitDate, &todo.Status)
 	if err != nil {
@@ -68,9 +67,8 @@ func (t TodoGateway) FindByID(ctx context.Context, id int) (*model.Todo, error) 
 }
 
 func (t TodoGateway) Create(ctx context.Context, todo *model.Todo) (*model.Todo, error) {
-	conn := t.GetDBConn()
 	cmd := fmt.Sprintf("INSERT INTO %s (id, task, limitdate, status) VALUES (?, ?, ?, ?)", `todo`)
-	ins, err := conn.Prepare(cmd)
+	ins, err := t.conn.Conn.Prepare(cmd)
 	if err != nil {
 		log.Println(err)
 	}
