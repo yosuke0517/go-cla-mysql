@@ -1,6 +1,7 @@
 package presenter
 
 import (
+	"fmt"
 	"go-cla-mysql/entities/model"
 	"go-cla-mysql/usecases/dto"
 	"go-cla-mysql/usecases/port"
@@ -27,5 +28,6 @@ func (t *Todo) Render(todos *model.Todos) dto.TodoOutPutUseCaseDto {
 }
 
 func (t *Todo) RenderError(err error) {
-	panic("implement me")
+	t.w.WriteHeader(http.StatusInternalServerError)
+	fmt.Fprint(t.w, err)
 }
