@@ -1,15 +1,16 @@
 package port
 
 import (
+	"context"
 	"go-cla-mysql/entities/model"
 	"go-cla-mysql/usecases/dto"
 )
 
 type TodoInputPort interface {
-	Create() model.Todos
-	FindAll(max int) model.Todos
-	FindByID(id int) (model.Todos, error)
-	Update(todo model.Todo) (model.Todos, error)
+	Create(ctx context.Context) model.Todos
+	FindAll(ctx context.Context, max int) dto.TodoOutPutUseCaseDto
+	FindByID(ctx context.Context, id int) (model.Todos, error)
+	Update(ctx context.Context, todo model.Todo) (model.Todos, error)
 }
 
 type TodoOutputPort interface {
