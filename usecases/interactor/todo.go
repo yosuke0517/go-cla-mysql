@@ -20,6 +20,14 @@ type Todo struct {
 	TodoRepo   repository.TodoRepository
 }
 
+// NewTodoInputPort はUserInputPortを取得します．（controllerで使用）
+func NewTodoInputPort(outputPort port.TodoOutputPort, todoRepository repository.TodoRepository) port.TodoInputPort {
+	return &Todo{
+		OutputPort: outputPort,
+		TodoRepo:   todoRepository,
+	}
+}
+
 func (t *Todo) Create(ctx context.Context) model.Todos {
 	panic("implement me")
 }
@@ -46,13 +54,4 @@ func (t *Todo) FindByID(ctx context.Context, id int) (model.Todos, error) {
 
 func (t *Todo) Update(ctx context.Context, todo model.Todo) (model.Todos, error) {
 	panic("implement me")
-}
-
-// NewTodoInputPort はUserInputPortを取得します．（controllerで使用）
-func NewTodoInputPort(outputPort port.TodoOutputPort, todoRepository repository.TodoRepository) *Todo {
-	return &Todo{
-		// repositoryをDI
-		OutputPort: outputPort,
-		TodoRepo:   todoRepository,
-	}
 }
