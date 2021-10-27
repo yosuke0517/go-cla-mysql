@@ -12,7 +12,7 @@ type Todo struct {
 	w http.ResponseWriter
 }
 
-func NewTodoOputPutPort(w http.ResponseWriter) port.TodoOutputPort {
+func NewTodoOutputPort(w http.ResponseWriter) port.TodoOutputPort {
 	return &Todo{
 		w: w,
 	}
