@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/labstack/echo"
 	"go-cla-mysql/routes"
+	"net/http"
+
+	"github.com/joho/godotenv"
 )
 
 // @title Swagger Example API
@@ -14,11 +16,17 @@ import (
 // @host localhost:8000
 // @BasePath /api/v1
 func main() {
+	loadEnv()
+	// ルーティング(handler登録)
+	routes.InitRoutign()
 	fmt.Println("start")
+	http.ListenAndServe(":8080", nil)
+}
 
-	e := echo.New()
-
-	// ルーティング
-	routes.InitRoutign(e)
-	e.Logger.Fatal(e.Start(":8080"))
+func loadEnv() {
+	err := godotenv.Load(".env")
+	//もし err がnilではないなら、"読み込み出来ませんでした"が出力されます。
+	if err != nil {
+		fmt.Printf("環境変数ファイルを読み込み出来ませんでした: %v", err)
+	}
 }
