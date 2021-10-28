@@ -1,21 +1,21 @@
 package controllers
 
 import (
-	"github.com/labstack/echo"
+	"go-cla-mysql/adapters/presenter"
 	"net/http"
 )
 
-func HealthCheckController() echo.HandlerFunc {
-	return func(c echo.Context) error {
-		return c.JSON(http.StatusOK, "I'm fine\n")
+func HealthCheckController() http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		presenter.Success(writer, "I'm fine\n")
 	}
 }
 
-func HelloController() echo.HandlerFunc {
-	return func(c echo.Context) error {
+func HelloController() http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
 		jsonMap := map[string]string{
 			"hello": "Hello",
 		}
-		return c.JSON(http.StatusOK, jsonMap)
+		presenter.Success(writer, jsonMap)
 	}
 }
