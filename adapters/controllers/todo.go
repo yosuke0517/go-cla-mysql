@@ -1,12 +1,13 @@
 package controllers
 
 import (
-	"github.com/labstack/echo"
+	"fmt"
+	"go-cla-mysql/adapters/presenter"
 	"go-cla-mysql/infratructure/db"
 	"go-cla-mysql/usecases/port"
 	"go-cla-mysql/usecases/repository"
-	"log"
 	"net/http"
+	"strconv"
 )
 
 type Todo struct {
@@ -20,17 +21,36 @@ type Todo struct {
 }
 
 // GetAll は，httpを受け取り，portを組み立てて，inputPort.FindAllを呼び出します．
-func (t *Todo) GetAll() echo.HandlerFunc {
-	return func(context echo.Context) error {
-		ctx := context.Request().Context()
-		outputPort := t.OutputFactory(context.Response().Writer)
+func (t *Todo) GetAll() http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		ctx := request.Context()
+		outputPort := t.OutputFactory(writer)
 		repository := t.RepoFactory(t.Conn)
 		inputPort := t.InputFactory(outputPort, repository)
 		// TODO 第二引数はqueryから取得しなければデフォルトをセットする
-		hoge, err := inputPort.FindAll(ctx, 10)
+		res, err := inputPort.FindAll(ctx, 10)
 		if err != nil {
-			log.Fatalf("GetAll error cause, %s", err)
+			presenter.InternalServerError(writer, fmt.Sprintf("cause: %s", err))
 		}
-		return context.JSON(http.StatusOK, hoge)
+		presenter.Success(writer, res)
+	}
+}
+
+func (t *Todo) GetOne() http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		ctx := request.Context()
+		strId := request.URL.Query().Get("id")
+		id, err := strconv.Atoi(strId)
+		if err != nil {
+			presenter.BadRequest(writer, fmt.Sprintf("parameter invalid! cause: %s", err))
+		}
+		outputPort := t.OutputFactory(writer)
+		repository := t.RepoFactory(t.Conn)
+		inputPort := t.InputFactory(outputPort, repository)
+		res, err := inputPort.FindByID(ctx, id)
+		if err != nil {
+			presenter.InternalServerError(writer, fmt.Sprintf("cause: %s", err))
+		}
+		presenter.Success(writer, res)
 	}
 }
