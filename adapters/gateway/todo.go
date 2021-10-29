@@ -68,19 +68,19 @@ func (t TodoGateway) FindByID(ctx context.Context, id int) (*model.Todos, error)
 	return &todos, nil
 }
 
-func (t TodoGateway) Create(ctx context.Context, todo *model.Todo) (*model.Todo, error) {
+func (t TodoGateway) Create(todo *model.Todo) (bool, error) {
 	cmd := fmt.Sprintf("INSERT INTO %s (id, task, limitdate, status) VALUES (?, ?, ?, ?)", `todo`)
 	ins, err := t.Conn.Prepare(cmd)
 	if err != nil {
-		log.Println(err)
+		return false, err
 	}
 	if ins != nil {
 		_, err = ins.Exec(todo.ID, todo.Task, todo.LimitDate, todo.Status)
 		if err != nil {
-			log.Println(err)
+			return false, err
 		}
 	}
-	return todo, nil
+	return true, nil
 }
 
 func (t TodoGateway) Update(ctx context.Context, todo *model.Todo) (*model.Todo, error) {
