@@ -11,9 +11,11 @@ func InitRoutign() {
 	todo := injector.InjectTodo()
 	http.HandleFunc("/health", get(controllers.HealthCheckController()))
 	http.HandleFunc("/hello", get(controllers.HelloController()))
-	// memo: Query取るときは末尾スラッシュ入れないと入ってこない
+	// memo: スラッシュの有無が厳格なのでQuery取るときは末尾スラッシュ入れないと入ってこない
+	// TODO パラメータがないやつも入ってくるようにできないかな？？
 	http.HandleFunc("/api/v1/todo/get/", get(todo.GetAll()))
 	http.HandleFunc("/api/v1/todo/getOne/", get(todo.GetOne()))
+	http.HandleFunc("/api/v1/todo/create/", post(todo.Create()))
 	// memo: ListenAndServeはHandleFuncの登録後
 	fmt.Println(http.ListenAndServe(fmt.Sprintf(":%s", "8080"), nil))
 }
