@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"fmt"
 	"go-cla-mysql/adapters/controllers"
 	"go-cla-mysql/injector"
 	"net/http"
@@ -10,7 +11,11 @@ func InitRoutign() {
 	todo := injector.InjectTodo()
 	http.HandleFunc("/health", get(controllers.HealthCheckController()))
 	http.HandleFunc("/hello", get(controllers.HelloController()))
-	http.HandleFunc("/api/v1/todo/get", todo.GetAll())
+	// memo: Query取るときは末尾スラッシュ入れないと入ってこない
+	http.HandleFunc("/api/v1/todo/get/", get(todo.GetAll()))
+	http.HandleFunc("/api/v1/todo/getOne/", get(todo.GetOne()))
+	// memo: ListenAndServeはHandleFuncの登録後
+	fmt.Println(http.ListenAndServe(fmt.Sprintf(":%s", "8080"), nil))
 }
 
 // get GETリクエストを処理する
