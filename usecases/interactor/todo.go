@@ -33,23 +33,29 @@ func (t *Todo) Create(ctx context.Context) model.Todos {
 }
 
 // FindAll usecase.UserInputPortを実装している
-// FindAll は，TodoRepo.GetUserByIDを呼び出し，その結果をOutputPort.Render or OutputPort.RenderErrorに渡します．
+// FindAll は，TodoRepo.GetUserByIDを呼び出し，dtoに詰めて呼び出し元（controller）へ返します。
 func (t *Todo) FindAll(ctx context.Context, max int) (*dto.TodoOutPutUseCaseDto, error) {
 	// maxの設定
 	const maxLimit int = 10
-	todos, err := t.TodoRepo.FindAll(maxLimit)
+	todos, err := t.TodoRepo.FindAll(ctx, maxLimit)
 	if err != nil {
 		t.OutputPort.RenderError(err)
 		return nil, nil
 	}
-	// TODO hitsを求めて、Dtoに変換して返す
 	var hits = len(*todos)
 	var todoOutPutUseCaseDto = dto.NewTodoOutPutUseCaseDto(hits, *todos)
 	return todoOutPutUseCaseDto, nil
 }
 
-func (t *Todo) FindByID(ctx context.Context, id int) (model.Todos, error) {
-	panic("implement me")
+func (t *Todo) FindByID(ctx context.Context, id int) (*dto.TodoOutPutUseCaseDto, error) {
+	todo, err := t.TodoRepo.FindByID(ctx, id)
+	if err != nil {
+		t.OutputPort.RenderError(err)
+		return nil, nil
+	}
+	var hits = len(*todo)
+	var todoOutPutUseCaseDto = dto.NewTodoOutPutUseCaseDto(hits, *todo)
+	return todoOutPutUseCaseDto, nil
 }
 
 func (t *Todo) Update(ctx context.Context, todo model.Todo) (model.Todos, error) {
