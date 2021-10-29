@@ -20,13 +20,13 @@ func NewTodoOutputPort(w http.ResponseWriter) port.TodoOutputPort {
 
 // usecasesのTodoOutputPortを実装
 func (t *Todo) Render(todos *model.Todos) dto.TodoOutPutUseCaseDto {
-	t.w.WriteHeader(http.StatusOK)
 	var output dto.TodoOutPutUseCaseDto
 	output.Hits = len(*todos)
 	output.Todos = *todos
 	return output
 }
 
+// TODO jsonで返す
 func (t *Todo) RenderError(err error) {
 	t.w.WriteHeader(http.StatusInternalServerError)
 	fmt.Fprint(t.w, err)
