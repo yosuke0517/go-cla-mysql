@@ -2,10 +2,8 @@ package main
 
 import (
 	"fmt"
-	"go-cla-mysql/routes"
-	"net/http"
-
 	"github.com/joho/godotenv"
+	"go-cla-mysql/routes"
 )
 
 // @title Swagger Example API
@@ -20,7 +18,6 @@ func main() {
 	// ルーティング(handler登録)
 	routes.InitRoutign()
 	fmt.Println("start")
-	http.ListenAndServe(":8080", nil)
 }
 
 func loadEnv() {
