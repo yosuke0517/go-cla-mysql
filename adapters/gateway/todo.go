@@ -17,7 +17,7 @@ repositoryにて宣言されたメソッドを実装します.
 */
 
 type TodoGateway struct {
-	conn db.SqlHandler
+	db.SqlHandler
 }
 
 // NewTodoGateway はTodoGatewayを返します．
@@ -25,23 +25,20 @@ type TodoGateway struct {
 // NewTodoGatewayを呼ぶ際、引数connにmockを渡せばテストが可能になります.
 func NewTodoGateway(handler db.SqlHandler) repository.TodoRepository {
 	return &TodoGateway{
-		conn: handler,
+		handler,
 	}
 }
 
-// GetDBConn はconnectionを取得します．
-func (t *TodoGateway) GetDBConn() db.SqlHandler {
-	return t.conn
-}
-
-func (t TodoGateway) FindAll(max int) (*model.Todos, error) {
-	rows, err := t.conn.Conn.Query("SELECT * FROM `todo`")
+func (t TodoGateway) FindAll(ctx context.Context, max int) (*model.Todos, error) {
+	tableName := "todo"
+	cmd := fmt.Sprintf(`SELECT * FROM %s`, tableName)
+	rows, err := t.Conn.Query(cmd)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, fmt.Errorf("Todo is not registered")
 		}
 		log.Println(err)
-		return nil, errors.New("Internal Server Error. adapters/gateway/FindAll")
+		return nil, errors.New(fmt.Sprintf("Internal Server Error. adapters/gateway/FindAll: %s", err))
 	}
 	var todos model.Todos
 	for rows.Next() {
@@ -52,8 +49,11 @@ func (t TodoGateway) FindAll(max int) (*model.Todos, error) {
 	return &todos, nil
 }
 
-func (t TodoGateway) FindByID(ctx context.Context, id int) (*model.Todo, error) {
-	row := t.conn.Conn.QueryRowContext(ctx, "SELECT * FROM `todo` WHERE id=?", id)
+// 1件なんだけど返却はFindAllと揃えた
+func (t TodoGateway) FindByID(ctx context.Context, id int) (*model.Todos, error) {
+	tableName := "todo"
+	cmd := fmt.Sprintf("SELECT * FROM %s WHERE id=?", tableName)
+	row := t.Conn.QueryRow(cmd, id)
 	todo := model.Todo{}
 	err := row.Scan(&todo.ID, &todo.Task, &todo.LimitDate, &todo.Status)
 	if err != nil {
@@ -63,12 +63,14 @@ func (t TodoGateway) FindByID(ctx context.Context, id int) (*model.Todo, error) 
 		log.Println(err)
 		return nil, errors.New("Internal Server Error. adapters/gateway/GetTodoByID")
 	}
-	return &todo, nil
+	var todos model.Todos
+	todos = append(todos, todo)
+	return &todos, nil
 }
 
 func (t TodoGateway) Create(ctx context.Context, todo *model.Todo) (*model.Todo, error) {
 	cmd := fmt.Sprintf("INSERT INTO %s (id, task, limitdate, status) VALUES (?, ?, ?, ?)", `todo`)
-	ins, err := t.conn.Conn.Prepare(cmd)
+	ins, err := t.Conn.Prepare(cmd)
 	if err != nil {
 		log.Println(err)
 	}
