@@ -1,8 +1,10 @@
 package controllers
 
 import (
+	"encoding/json"
 	"fmt"
 	"go-cla-mysql/adapters/presenter"
+	"go-cla-mysql/entities/model"
 	"go-cla-mysql/infratructure/db"
 	"go-cla-mysql/usecases/port"
 	"go-cla-mysql/usecases/repository"
@@ -23,6 +25,7 @@ type Todo struct {
 // GetAll は，httpを受け取り，portを組み立てて，inputPort.FindAllを呼び出します．
 func (t *Todo) GetAll() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
+		// TODO 各メソッドで以下4行のinjectしないといけない。なんとかならんか…
 		ctx := request.Context()
 		outputPort := t.OutputFactory(writer)
 		repository := t.RepoFactory(t.Conn)
@@ -52,5 +55,27 @@ func (t *Todo) GetOne() http.HandlerFunc {
 			presenter.InternalServerError(writer, fmt.Sprintf("cause: %s", err))
 		}
 		presenter.Success(writer, res)
+	}
+}
+
+func (t *Todo) Create() http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		data := &model.Todo{}
+		if err := json.NewDecoder(request.Body).Decode(&data); err != nil {
+			presenter.BadRequest(writer, "Bad request: "+err.Error())
+			return
+		}
+		// TODO validation追加
+		outputPort := t.OutputFactory(writer)
+		repository := t.RepoFactory(t.Conn)
+		inputPort := t.InputFactory(outputPort, repository)
+		res, err := inputPort.Create(data)
+		if err != nil {
+			presenter.InternalServerError(writer, fmt.Sprintf("cause: %S", err))
+		}
+		jsonMap := map[string]bool{
+			"isCreate": res,
+		}
+		presenter.Success(writer, jsonMap)
 	}
 }
