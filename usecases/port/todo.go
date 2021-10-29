@@ -7,7 +7,7 @@ import (
 )
 
 type TodoInputPort interface {
-	Create(ctx context.Context) model.Todos
+	Create(todo *model.Todo) (bool, error)
 	FindAll(ctx context.Context, max int) (*dto.TodoOutPutUseCaseDto, error)
 	FindByID(ctx context.Context, id int) (*dto.TodoOutPutUseCaseDto, error)
 	Update(ctx context.Context, todo model.Todo) (model.Todos, error)
