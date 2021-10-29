@@ -28,8 +28,9 @@ func NewTodoInputPort(outputPort port.TodoOutputPort, todoRepository repository.
 	}
 }
 
-func (t *Todo) Create(ctx context.Context) model.Todos {
-	panic("implement me")
+func (t *Todo) Create(data *model.Todo) (bool, error) {
+	isCreated, err := t.TodoRepo.Create(data)
+	return isCreated, err
 }
 
 // FindAll usecase.UserInputPortを実装している
@@ -50,8 +51,7 @@ func (t *Todo) FindAll(ctx context.Context, max int) (*dto.TodoOutPutUseCaseDto,
 func (t *Todo) FindByID(ctx context.Context, id int) (*dto.TodoOutPutUseCaseDto, error) {
 	todo, err := t.TodoRepo.FindByID(ctx, id)
 	if err != nil {
-		t.OutputPort.RenderError(err)
-		return nil, nil
+		return nil, err
 	}
 	var hits = len(*todo)
 	var todoOutPutUseCaseDto = dto.NewTodoOutPutUseCaseDto(hits, *todo)
