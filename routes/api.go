@@ -16,6 +16,7 @@ func InitRoutign() {
 	http.HandleFunc("/api/v1/todo/get/", get(todo.GetAll()))
 	http.HandleFunc("/api/v1/todo/getOne/", get(todo.GetOne()))
 	http.HandleFunc("/api/v1/todo/create/", post(todo.Create()))
+	http.HandleFunc("/api/v1/todo/update/", put(todo.Update()))
 	// memo: ListenAndServeはHandleFuncの登録後
 	fmt.Println(http.ListenAndServe(fmt.Sprintf(":%s", "8080"), nil))
 }
@@ -28,6 +29,10 @@ func get(apiFunc http.HandlerFunc) http.HandlerFunc {
 // post POSTリクエストを処理する
 func post(apiFunc http.HandlerFunc) http.HandlerFunc {
 	return httpMethod(apiFunc, http.MethodPost)
+}
+
+func put(aiipFunc http.HandlerFunc) http.HandlerFunc {
+	return httpMethod(aiipFunc, http.MethodPut)
 }
 
 // httpMethod 指定したHTTPメソッドでAPIの処理を実行する
