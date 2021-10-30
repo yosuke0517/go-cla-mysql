@@ -11,5 +11,5 @@ type TodoRepository interface {
 	FindAll(ctx context.Context, max int) (todos *model.Todos, err error)
 	FindByID(ctx context.Context, id int) (todos *model.Todos, err error)
 	Create(todo *model.Todo) (bool, error)
-	Update(ctx context.Context, todo *model.Todo) (*model.Todo, error)
+	Update(todo *model.Todo) (bool, error)
 }
