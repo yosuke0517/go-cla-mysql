@@ -69,12 +69,36 @@ func (t *Todo) Create() http.HandlerFunc {
 		outputPort := t.OutputFactory(writer)
 		repository := t.RepoFactory(t.Conn)
 		inputPort := t.InputFactory(outputPort, repository)
+		// TODO controllerではinputPortを呼び出すだけにするinputPort内でpresenter.Successなどの処理をする
 		res, err := inputPort.Create(data)
 		if err != nil {
 			presenter.InternalServerError(writer, fmt.Sprintf("cause: %S", err))
 		}
 		jsonMap := map[string]bool{
 			"isCreate": res,
+		}
+		presenter.Success(writer, jsonMap)
+	}
+}
+
+func (t *Todo) Update() http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		data := &model.Todo{}
+		if err := json.NewDecoder(request.Body).Decode(&data); err != nil {
+			presenter.BadRequest(writer, "Bad request: "+err.Error())
+			return
+		}
+		// TODO validation追加
+		outputPort := t.OutputFactory(writer)
+		repository := t.RepoFactory(t.Conn)
+		inputPort := t.InputFactory(outputPort, repository)
+		// TODO controllerではinputPortを呼び出すだけにするinputPort内でpresenter.Successなどの処理をする
+		res, err := inputPort.Update(data)
+		if err != nil {
+			presenter.InternalServerError(writer, fmt.Sprintf("cause: %S", err))
+		}
+		jsonMap := map[string]bool{
+			"isUpdate": res,
 		}
 		presenter.Success(writer, jsonMap)
 	}
