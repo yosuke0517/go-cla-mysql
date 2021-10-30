@@ -28,8 +28,8 @@ func NewTodoInputPort(outputPort port.TodoOutputPort, todoRepository repository.
 	}
 }
 
-func (t *Todo) Create(data *model.Todo) (bool, error) {
-	isCreated, err := t.TodoRepo.Create(data)
+func (t *Todo) Create(todo *model.Todo) (bool, error) {
+	isCreated, err := t.TodoRepo.Create(todo)
 	return isCreated, err
 }
 
@@ -58,6 +58,7 @@ func (t *Todo) FindByID(ctx context.Context, id int) (*dto.TodoOutPutUseCaseDto,
 	return todoOutPutUseCaseDto, nil
 }
 
-func (t *Todo) Update(ctx context.Context, todo model.Todo) (model.Todos, error) {
-	panic("implement me")
+func (t *Todo) Update(todo *model.Todo) (bool, error) {
+	isCreated, err := t.TodoRepo.Update(todo)
+	return isCreated, err
 }
