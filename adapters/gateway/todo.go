@@ -16,6 +16,8 @@ gateway パッケージは，DB操作に対するアダプターです．
 repositoryにて宣言されたメソッドを実装します.
 */
 
+var tableName = "todo"
+
 type TodoGateway struct {
 	db.SqlHandler
 }
@@ -51,7 +53,6 @@ func (t TodoGateway) FindAll(ctx context.Context, max int) (*model.Todos, error)
 
 // 1件なんだけど返却はFindAllと揃えた
 func (t TodoGateway) FindByID(ctx context.Context, id int) (*model.Todos, error) {
-	tableName := "todo"
 	cmd := fmt.Sprintf("SELECT * FROM %s WHERE id=?", tableName)
 	row := t.Conn.QueryRow(cmd, id)
 	todo := model.Todo{}
@@ -83,6 +84,17 @@ func (t TodoGateway) Create(todo *model.Todo) (bool, error) {
 	return true, nil
 }
 
-func (t TodoGateway) Update(ctx context.Context, todo *model.Todo) (*model.Todo, error) {
-	panic("implement me")
+func (t TodoGateway) Update(todo *model.Todo) (bool, error) {
+	cmd := fmt.Sprintf("UPDATE %s SET task = ?, limitDate = ?, status = ? WHERE id = ?", tableName)
+	upd, err := t.Conn.Prepare(cmd)
+	if err != nil {
+		return false, err
+	}
+	if upd != nil {
+		_, err = upd.Exec(todo.Task, todo.LimitDate, todo.Status, todo.ID)
+		if err != nil {
+			return false, err
+		}
+	}
+	return true, nil
 }
