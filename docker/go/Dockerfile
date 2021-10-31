@@ -8,12 +8,14 @@ COPY . .
 
 ARG AIR_VERSION=v1.27.3
 ARG DLV_VERSION=v1.7.1
+ARG MIGRATE_VERSION=v4.15.0
 
 RUN set -eux && \
   apk update && \
-  apk add --no-cache git curl make && \
+  apk add --no-cache git vim curl make && \
   go install github.com/cosmtrek/air@${AIR_VERSION} && \
-  go install github.com/go-delve/delve/cmd/dlv@${DLV_VERSION}
+  go install github.com/go-delve/delve/cmd/dlv@${DLV_VERSION} && \
+  go install -tags 'mysql' github.com/golang-migrate/migrate/v4/cmd/migrate@${MIGRATE_VERSION}
 
 RUN set -eux && \
   go build -o go-cla-mysql ./main.go
