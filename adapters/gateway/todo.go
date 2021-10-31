@@ -16,7 +16,7 @@ gateway パッケージは，DB操作に対するアダプターです．
 repositoryにて宣言されたメソッドを実装します.
 */
 
-var tableName = "todo"
+var tableName = "todos"
 
 type TodoGateway struct {
 	db.SqlHandler
@@ -32,7 +32,6 @@ func NewTodoGateway(handler db.SqlHandler) repository.TodoRepository {
 }
 
 func (t TodoGateway) FindAll(ctx context.Context, max int) (*model.Todos, error) {
-	tableName := "todo"
 	cmd := fmt.Sprintf(`SELECT * FROM %s`, tableName)
 	rows, err := t.Conn.Query(cmd)
 	if err != nil {
@@ -45,7 +44,7 @@ func (t TodoGateway) FindAll(ctx context.Context, max int) (*model.Todos, error)
 	var todos model.Todos
 	for rows.Next() {
 		var todo model.Todo
-		rows.Scan(&todo.ID, &todo.Task, &todo.LimitDate, &todo.Status)
+		rows.Scan(&todo.ID, &todo.Task, &todo.LimitDate, &todo.Status, &todo.Deleted)
 		todos = append(todos, todo)
 	}
 	return &todos, nil
@@ -56,7 +55,7 @@ func (t TodoGateway) FindByID(ctx context.Context, id int) (*model.Todos, error)
 	cmd := fmt.Sprintf("SELECT * FROM %s WHERE id=?", tableName)
 	row := t.Conn.QueryRow(cmd, id)
 	todo := model.Todo{}
-	err := row.Scan(&todo.ID, &todo.Task, &todo.LimitDate, &todo.Status)
+	err := row.Scan(&todo.ID, &todo.Task, &todo.LimitDate, &todo.Status, &todo.Deleted)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, fmt.Errorf("Todo Not Found. ID = %s", id)
@@ -70,7 +69,7 @@ func (t TodoGateway) FindByID(ctx context.Context, id int) (*model.Todos, error)
 }
 
 func (t TodoGateway) Create(todo *model.Todo) (bool, error) {
-	cmd := fmt.Sprintf("INSERT INTO %s (id, task, limitdate, status) VALUES (?, ?, ?, ?)", `todo`)
+	cmd := fmt.Sprintf("INSERT INTO %s (id, task, limitdate, status) VALUES (?, ?, ?, ?)", `todos`)
 	ins, err := t.Conn.Prepare(cmd)
 	if err != nil {
 		return false, err
@@ -85,13 +84,13 @@ func (t TodoGateway) Create(todo *model.Todo) (bool, error) {
 }
 
 func (t TodoGateway) Update(todo *model.Todo) (bool, error) {
-	cmd := fmt.Sprintf("UPDATE %s SET task = ?, limitDate = ?, status = ? WHERE id = ?", tableName)
+	cmd := fmt.Sprintf("UPDATE %s SET task = ?, limitDate = ?, status = ?, deleted = ? WHERE id = ?", tableName)
 	upd, err := t.Conn.Prepare(cmd)
 	if err != nil {
 		return false, err
 	}
 	if upd != nil {
-		_, err = upd.Exec(todo.Task, todo.LimitDate, todo.Status, todo.ID)
+		_, err = upd.Exec(todo.Task, todo.LimitDate, todo.Status, todo.Deleted, todo.ID)
 		if err != nil {
 			return false, err
 		}
