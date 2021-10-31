@@ -1,7 +1,28 @@
 # go-cla-mysql
 
+# ローカルで動かす
+```bash
+docker-compose up
+```
+
+
 # フレームワーク
-- echo: 使ったことあるから程度
+- 最初echo使ってたけどあんまり使う必要なかったから無くした
+
+# DB
+- MySQLを使用する
+
+
+# DBマイグレーション
+```bash
+# データベースにマイグレーションの実行
+docker-compose exec app make migrate-up
+
+# マイグレーションをロールバックする
+# Are you sure you want to apply all down migrations? [y/N] と2回聞かれるので y でEnterして下さい
+docker-compose exec go make migrate-down
+```
+
 
 # ミドルウェア
 - DB: MySQL(5.7)
@@ -14,10 +35,6 @@
 
 # 環境構築
 - https://fuzzy-hunter-3bf.notion.site/golang-docker-afad7bfb494740b3910834a489452784
-
-# フレームワーク
-- echo
-  - ルーティング（Get, Postの分け方とか）が簡単だったけど、それでしか使ってない
 
 # ディレクトリ構成
 - TODO notionにまとめて公開する
