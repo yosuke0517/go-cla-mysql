@@ -6,5 +6,6 @@ type Todo struct {
 	Task      string `json:"task"`
 	LimitDate string `json:"limitDate"`
 	Status    bool   `json:"status"`
+	Deleted   bool   `json:"deleted"`
 }
 type Todos []Todo
