@@ -35,7 +35,7 @@ services:
       # - REDIS_PORT=6379
     expose:
       - 3306
-  web:
+  app:
     build:
       context: .
       dockerfile: ./docker/go/Dockerfile
