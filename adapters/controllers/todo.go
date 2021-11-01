@@ -26,12 +26,11 @@ type Todo struct {
 func (t *Todo) GetAll() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		// TODO 各メソッドで以下4行のinjectしないといけない。なんとかならんか…
-		ctx := request.Context()
 		outputPort := t.OutputFactory(writer)
 		repository := t.RepoFactory(t.Conn)
 		inputPort := t.InputFactory(outputPort, repository)
 		// TODO 第二引数はqueryから取得しなければデフォルトをセットする
-		res, err := inputPort.FindAll(ctx, 10)
+		res, err := inputPort.FindAll(10)
 		if err != nil {
 			presenter.InternalServerError(writer, fmt.Sprintf("cause: %s", err))
 		}
@@ -41,7 +40,6 @@ func (t *Todo) GetAll() http.HandlerFunc {
 
 func (t *Todo) GetOne() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
-		ctx := request.Context()
 		strId := request.URL.Query().Get("id")
 		id, err := strconv.Atoi(strId)
 		if err != nil {
@@ -50,7 +48,7 @@ func (t *Todo) GetOne() http.HandlerFunc {
 		outputPort := t.OutputFactory(writer)
 		repository := t.RepoFactory(t.Conn)
 		inputPort := t.InputFactory(outputPort, repository)
-		res, err := inputPort.FindByID(ctx, id)
+		res, err := inputPort.FindByID(id)
 		if err != nil {
 			presenter.InternalServerError(writer, fmt.Sprintf("cause: %s", err))
 		}
