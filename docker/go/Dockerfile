@@ -18,7 +18,7 @@ RUN set -eux && \
   go install -tags 'mysql' github.com/golang-migrate/migrate/v4/cmd/migrate@${MIGRATE_VERSION}
 
 RUN set -eux && \
-  go build -o go-cla-mysql ./main.go
+  go build -o go-cla-practice ./main.go
 
 ENV CGO_ENABLED 0
 
@@ -26,16 +26,16 @@ FROM alpine:3.14
 
 WORKDIR /app
 
-COPY --from=build /go/app/go-cla-mysql .
+COPY --from=build /go/app/go-cla-practice .
 
 RUN set -x && \
   addgroup go && \
   adduser -D -G go go && \
-  chown -R go:go /app/go-cla-mysql
+  chown -R go:go /app/go-cla-practice
 
-CMD ["./go-cla-mysql"]
+CMD ["./go-cla-practice"]
 
-FROM golang:1.15.7-alpine as builder
+FROM golang:1.17-alpine3.14 as builder
 
 ENV ROOT=/go/app
 WORKDIR ${ROOT}
