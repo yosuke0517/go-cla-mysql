@@ -8,7 +8,6 @@ interactorはアウトプットポートに依存し(importするということ
 */
 
 import (
-	"context"
 	"go-cla-mysql/entities/model"
 	"go-cla-mysql/usecases/dto"
 	"go-cla-mysql/usecases/port"
@@ -35,10 +34,10 @@ func (t *Todo) Create(todo *model.Todo) (bool, error) {
 
 // FindAll usecase.UserInputPortを実装している
 // FindAll は，TodoRepo.GetUserByIDを呼び出し，dtoに詰めて呼び出し元（controller）へ返します。
-func (t *Todo) FindAll(ctx context.Context, max int) (*dto.TodoOutPutUseCaseDto, error) {
+func (t *Todo) FindAll(max int) (*dto.TodoOutPutUseCaseDto, error) {
 	// maxの設定
 	const maxLimit int = 10
-	todos, err := t.TodoRepo.FindAll(ctx, maxLimit)
+	todos, err := t.TodoRepo.FindAll(maxLimit)
 	if err != nil {
 		t.OutputPort.RenderError(err)
 		return nil, nil
@@ -48,8 +47,8 @@ func (t *Todo) FindAll(ctx context.Context, max int) (*dto.TodoOutPutUseCaseDto,
 	return todoOutPutUseCaseDto, nil
 }
 
-func (t *Todo) FindByID(ctx context.Context, id int) (*dto.TodoOutPutUseCaseDto, error) {
-	todo, err := t.TodoRepo.FindByID(ctx, id)
+func (t *Todo) FindByID(id int) (*dto.TodoOutPutUseCaseDto, error) {
+	todo, err := t.TodoRepo.FindByID(id)
 	if err != nil {
 		return nil, err
 	}
