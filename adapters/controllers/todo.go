@@ -72,7 +72,7 @@ func (t *Todo) Create() http.HandlerFunc {
 		// TODO controllerではinputPortを呼び出すだけにするinputPort内でpresenter.Successなどの処理をする
 		res, err := inputPort.Create(data)
 		if err != nil {
-			presenter.InternalServerError(writer, fmt.Sprintf("cause: %S", err))
+			presenter.InternalServerError(writer, fmt.Sprintf("cause: %s", err))
 		}
 		jsonMap := map[string]bool{
 			"isCreate": res,
@@ -95,7 +95,7 @@ func (t *Todo) Update() http.HandlerFunc {
 		// TODO controllerではinputPortを呼び出すだけにするinputPort内でpresenter.Successなどの処理をする
 		res, err := inputPort.Update(data)
 		if err != nil {
-			presenter.InternalServerError(writer, fmt.Sprintf("cause: %S", err))
+			presenter.InternalServerError(writer, fmt.Sprintf("cause: %s", err))
 		}
 		jsonMap := map[string]bool{
 			"isUpdate": res,
