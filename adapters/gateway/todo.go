@@ -1,7 +1,6 @@
 package gateway
 
 import (
-	"context"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -31,7 +30,7 @@ func NewTodoGateway(handler db.SqlHandler) repository.TodoRepository {
 	}
 }
 
-func (t TodoGateway) FindAll(ctx context.Context, max int) (*model.Todos, error) {
+func (t TodoGateway) FindAll(max int) (*model.Todos, error) {
 	cmd := fmt.Sprintf(`SELECT * FROM %s`, tableName)
 	rows, err := t.Conn.Query(cmd)
 	if err != nil {
@@ -51,7 +50,7 @@ func (t TodoGateway) FindAll(ctx context.Context, max int) (*model.Todos, error)
 }
 
 // 1件なんだけど返却はFindAllと揃えた
-func (t TodoGateway) FindByID(ctx context.Context, id int) (*model.Todos, error) {
+func (t TodoGateway) FindByID(id int) (*model.Todos, error) {
 	cmd := fmt.Sprintf("SELECT * FROM %s WHERE id=?", tableName)
 	row := t.Conn.QueryRow(cmd, id)
 	todo := model.Todo{}
