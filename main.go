@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/joho/godotenv"
-	"go-cla-mysql/routes"
+	"go-cla-practice/routes"
 )
 
 // @title Swagger Example API
