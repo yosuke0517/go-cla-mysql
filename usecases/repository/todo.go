@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"go-cla-mysql/entities/model"
+	"go-cla-practice/entities/model"
 )
 
 // todoのCRUDに対するDB用のリポジトリ（ポート）
