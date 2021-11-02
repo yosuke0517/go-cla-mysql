@@ -4,9 +4,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"go-cla-mysql/entities/model"
-	"go-cla-mysql/infratructure/db"
-	"go-cla-mysql/usecases/repository"
+	"go-cla-practice/entities/model"
+	"go-cla-practice/infratructure/db"
+	"go-cla-practice/usecases/repository"
 	"log"
 )
 
