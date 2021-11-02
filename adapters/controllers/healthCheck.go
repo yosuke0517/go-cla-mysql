@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"go-cla-mysql/adapters/presenter"
+	"go-cla-practice/adapters/presenter"
 	"net/http"
 )
 
