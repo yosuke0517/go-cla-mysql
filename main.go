@@ -16,7 +16,7 @@ import (
 func main() {
 	loadEnv()
 	// ルーティング(handler登録)
-	routes.InitRoutign()
+	routes.InitRouting()
 	fmt.Println("start")
 }
 
