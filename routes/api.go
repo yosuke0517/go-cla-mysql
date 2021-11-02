@@ -2,8 +2,8 @@ package routes
 
 import (
 	"fmt"
-	"go-cla-mysql/adapters/controllers"
-	"go-cla-mysql/injector"
+	"go-cla-practice/adapters/controllers"
+	"go-cla-practice/injector"
 	"net/http"
 )
 
