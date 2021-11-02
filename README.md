@@ -1,4 +1,4 @@
-# go-cla-mysql
+# go-cla-practice
 
 # ローカルで動かす
 ```bash
@@ -10,10 +10,11 @@ docker-compose up
 - 最初echo使ってたけどあんまり使う必要なかったから無くした
 
 # DB
-- MySQLを使用する
+- MySQLを使用
 
 
 # DBマイグレーション
+- go-migration
 ```bash
 # データベースにマイグレーションの実行
 docker-compose exec app make migrate-up
@@ -34,7 +35,7 @@ docker-compose exec go make migrate-down
 - "github.com/joho/godotenv"を使用
 
 # 環境構築
-- https://fuzzy-hunter-3bf.notion.site/golang-docker-afad7bfb494740b3910834a489452784
+- [notion](https://fuzzy-hunter-3bf.notion.site/golang-docker-afad7bfb494740b3910834a489452784) に書いて公開してます。
 
 # ディレクトリ構成
 - TODO notionにまとめて公開する
@@ -55,6 +56,7 @@ docker-compose exec go make migrate-down
 # 確認したいこと
 - 依存関係の注入（inject）とルーティング(routes)の登録はどの階層？？（現状トップレベル）
 - レスポンスの共通部品はpresenterでOK??
+  - controllerでinputPortの結果からレスポンスの共通部品を呼んでいるけどoutPutPortで呼んだ方がいい？
 - httpメソッドのヘルパーをroutesに作ったけどここにあるの違和感ある？？
 - TodoInputPortの返り値ポインタにしているが値でもいいか？？この辺の分け方（ポインタのときと値の時の違い）がわからん
 - InputPortをinteractorで実装しているが何を返すべきなのか不明…
