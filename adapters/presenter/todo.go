@@ -1,7 +1,6 @@
 package presenter
 
 import (
-	"fmt"
 	"go-cla-practice/entities/model"
 	"go-cla-practice/usecases/dto"
 	"go-cla-practice/usecases/port"
@@ -9,25 +8,20 @@ import (
 )
 
 type Todo struct {
-	w http.ResponseWriter
 }
 
-func NewTodoOutputPort(w http.ResponseWriter) port.TodoOutputPort {
-	return &Todo{
-		w: w,
-	}
+func NewTodoOutputPort() port.TodoOutputPort {
+	return &Todo{}
 }
 
 // usecasesのTodoOutputPortを実装
-func (t *Todo) Render(todos *model.Todos) dto.TodoOutPutUseCaseDto {
-	var output dto.TodoOutPutUseCaseDto
-	output.Hits = len(*todos)
-	output.Todos = *todos
-	return output
+func (t *Todo) Render(writer http.ResponseWriter, todos *model.Todos) {
+	var hits = len(*todos)
+	var todoOutPutUseCaseDto = dto.NewTodoOutPutUseCaseDto(hits, *todos)
+	Success(writer, todoOutPutUseCaseDto)
 }
 
 // TODO jsonで返す
-func (t *Todo) RenderError(err error) {
-	t.w.WriteHeader(http.StatusInternalServerError)
-	fmt.Fprint(t.w, err)
+func (t *Todo) RenderError(writer http.ResponseWriter, err error) {
+	InternalServerError(writer, "Server Error Please check log")
 }
