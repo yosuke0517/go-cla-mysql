@@ -1,11 +1,11 @@
 package injector
 
 import (
-	"go-cla-mysql/adapters/controllers"
-	"go-cla-mysql/adapters/gateway"
-	"go-cla-mysql/adapters/presenter"
-	"go-cla-mysql/infratructure/db"
-	"go-cla-mysql/usecases/interactor"
+	"go-cla-practice/adapters/controllers"
+	"go-cla-practice/adapters/gateway"
+	"go-cla-practice/adapters/presenter"
+	"go-cla-practice/infratructure/db"
+	"go-cla-practice/usecases/interactor"
 )
 
 func InjectDB() db.SqlHandler {
