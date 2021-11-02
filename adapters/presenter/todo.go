@@ -2,9 +2,9 @@ package presenter
 
 import (
 	"fmt"
-	"go-cla-mysql/entities/model"
-	"go-cla-mysql/usecases/dto"
-	"go-cla-mysql/usecases/port"
+	"go-cla-practice/entities/model"
+	"go-cla-practice/usecases/dto"
+	"go-cla-practice/usecases/port"
 	"net/http"
 )
 
