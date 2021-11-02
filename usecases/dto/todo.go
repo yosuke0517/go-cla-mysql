@@ -1,6 +1,6 @@
 package dto
 
-import "go-cla-mysql/entities/model"
+import "go-cla-practice/entities/model"
 
 // 現状はtodoを配列にしただけだが、今後子供のtodoとかを入れたい要望があったときとかの場合にここに追加していく
 type TodoOutPutUseCaseDto struct {
