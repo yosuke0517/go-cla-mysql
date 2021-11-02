@@ -67,32 +67,36 @@ func (t TodoGateway) FindByID(id int) (*model.Todos, error) {
 	return &todos, nil
 }
 
-func (t TodoGateway) Create(todo *model.Todo) (bool, error) {
+func (t TodoGateway) Create(todo *model.Todo) (*model.Todos, error) {
 	cmd := fmt.Sprintf("INSERT INTO %s (id, task, limitdate, status) VALUES (?, ?, ?, ?)", `todos`)
 	ins, err := t.Conn.Prepare(cmd)
+	var todos model.Todos
 	if err != nil {
-		return false, err
+		return &todos, err
 	}
 	if ins != nil {
 		_, err = ins.Exec(todo.ID, todo.Task, todo.LimitDate, todo.Status)
 		if err != nil {
-			return false, err
+			return &todos, err
 		}
 	}
-	return true, nil
+	todos = append(todos, *todo)
+	return &todos, nil
 }
 
-func (t TodoGateway) Update(todo *model.Todo) (bool, error) {
+func (t TodoGateway) Update(todo *model.Todo) (*model.Todos, error) {
 	cmd := fmt.Sprintf("UPDATE %s SET task = ?, limitDate = ?, status = ?, deleted = ? WHERE id = ?", tableName)
 	upd, err := t.Conn.Prepare(cmd)
+	var todos model.Todos
 	if err != nil {
-		return false, err
+		return &todos, err
 	}
 	if upd != nil {
 		_, err = upd.Exec(todo.Task, todo.LimitDate, todo.Status, todo.Deleted, todo.ID)
 		if err != nil {
-			return false, err
+			return &todos, err
 		}
 	}
-	return true, nil
+	todos = append(todos, *todo)
+	return &todos, nil
 }

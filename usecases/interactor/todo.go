@@ -9,9 +9,9 @@ interactorはアウトプットポートに依存し(importするということ
 
 import (
 	"go-cla-practice/entities/model"
-	"go-cla-practice/usecases/dto"
 	"go-cla-practice/usecases/port"
 	"go-cla-practice/usecases/repository"
+	"net/http"
 )
 
 type Todo struct {
@@ -27,37 +27,42 @@ func NewTodoInputPort(outputPort port.TodoOutputPort, todoRepository repository.
 	}
 }
 
-func (t *Todo) Create(todo *model.Todo) (bool, error) {
-	isCreated, err := t.TodoRepo.Create(todo)
-	return isCreated, err
+func (t *Todo) Create(writer http.ResponseWriter, todo *model.Todo) {
+	_, err := t.TodoRepo.Create(todo)
+	if err != nil {
+		t.OutputPort.RenderError(writer, err)
+	}
+	var todos model.Todos
+	todos = append(todos, *todo)
+	t.OutputPort.Render(writer, &todos)
 }
 
 // FindAll usecase.UserInputPortを実装している
 // FindAll は，TodoRepo.GetUserByIDを呼び出し，dtoに詰めて呼び出し元（controller）へ返します。
-func (t *Todo) FindAll(max int) (*dto.TodoOutPutUseCaseDto, error) {
+func (t *Todo) FindAll(writer http.ResponseWriter, max int) {
 	// maxの設定
 	const maxLimit int = 10
 	todos, err := t.TodoRepo.FindAll(maxLimit)
 	if err != nil {
-		t.OutputPort.RenderError(err)
-		return nil, nil
+		t.OutputPort.RenderError(writer, err)
 	}
-	var hits = len(*todos)
-	var todoOutPutUseCaseDto = dto.NewTodoOutPutUseCaseDto(hits, *todos)
-	return todoOutPutUseCaseDto, nil
+	t.OutputPort.Render(writer, todos)
 }
 
-func (t *Todo) FindByID(id int) (*dto.TodoOutPutUseCaseDto, error) {
-	todo, err := t.TodoRepo.FindByID(id)
+func (t *Todo) FindByID(writer http.ResponseWriter, id int) {
+	todos, err := t.TodoRepo.FindByID(id)
 	if err != nil {
-		return nil, err
+		t.OutputPort.RenderError(writer, err)
 	}
-	var hits = len(*todo)
-	var todoOutPutUseCaseDto = dto.NewTodoOutPutUseCaseDto(hits, *todo)
-	return todoOutPutUseCaseDto, nil
+	t.OutputPort.Render(writer, todos)
 }
 
-func (t *Todo) Update(todo *model.Todo) (bool, error) {
-	isCreated, err := t.TodoRepo.Update(todo)
-	return isCreated, err
+func (t *Todo) Update(writer http.ResponseWriter, todo *model.Todo) {
+	_, err := t.TodoRepo.Update(todo)
+	if err != nil {
+		t.OutputPort.RenderError(writer, err)
+	}
+	var todos model.Todos
+	todos = append(todos, *todo)
+	t.OutputPort.Render(writer, &todos)
 }

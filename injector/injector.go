@@ -6,6 +6,8 @@ import (
 	"go-cla-practice/adapters/presenter"
 	"go-cla-practice/infratructure/db"
 	"go-cla-practice/usecases/interactor"
+	"go-cla-practice/usecases/port"
+	"go-cla-practice/usecases/repository"
 )
 
 func InjectDB() db.SqlHandler {
@@ -13,12 +15,21 @@ func InjectDB() db.SqlHandler {
 	return *sqlhandler
 }
 
-func InjectTodo() controllers.Todo {
-	todo := controllers.Todo{
-		OutputFactory: presenter.NewTodoOutputPort,
-		InputFactory:  interactor.NewTodoInputPort,
-		RepoFactory:   gateway.NewTodoGateway,
-		Conn:          InjectDB(),
-	}
-	return todo
+func InjectTodoGateway() repository.TodoRepository {
+	sqlHandler := InjectDB()
+	return gateway.NewTodoGateway(sqlHandler)
+}
+
+func InjectOutPutPort() port.TodoOutputPort {
+	return presenter.NewTodoOutputPort()
+}
+
+func InjectInputPort() port.TodoInputPort {
+	OutPutPort := InjectOutPutPort()
+	TodoRepo := InjectTodoGateway()
+	return interactor.NewTodoInputPort(OutPutPort, TodoRepo)
+}
+
+func InjectTodoHandler() controllers.TodoHandler {
+	return controllers.NewTodoHandler(InjectInputPort())
 }

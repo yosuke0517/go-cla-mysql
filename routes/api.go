@@ -7,16 +7,16 @@ import (
 	"net/http"
 )
 
-func InitRoutign() {
-	todo := injector.InjectTodo()
+func InitRouting() {
+	todoHandler := injector.InjectTodoHandler()
 	http.HandleFunc("/health", get(controllers.HealthCheckController()))
 	http.HandleFunc("/hello", get(controllers.HelloController()))
 	// memo: スラッシュの有無が厳格なのでQuery取るときは末尾スラッシュ入れないと入ってこない
 	// TODO パラメータがないやつも入ってくるようにできないかな？？
-	http.HandleFunc("/api/v1/todo/get/", get(todo.GetAll()))
-	http.HandleFunc("/api/v1/todo/getOne/", get(todo.GetOne()))
-	http.HandleFunc("/api/v1/todo/create/", post(todo.Create()))
-	http.HandleFunc("/api/v1/todo/update/", put(todo.Update()))
+	http.HandleFunc("/api/v1/todo/get/", get(todoHandler.GetAll()))
+	http.HandleFunc("/api/v1/todo/getOne/", get(todoHandler.GetOne()))
+	http.HandleFunc("/api/v1/todo/create/", post(todoHandler.Create()))
+	http.HandleFunc("/api/v1/todo/update/", put(todoHandler.Update()))
 	// memo: ListenAndServeはHandleFuncの登録後
 	fmt.Println(http.ListenAndServe(fmt.Sprintf(":%s", "8080"), nil))
 }
