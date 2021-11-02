@@ -8,10 +8,10 @@ interactorはアウトプットポートに依存し(importするということ
 */
 
 import (
-	"go-cla-mysql/entities/model"
-	"go-cla-mysql/usecases/dto"
-	"go-cla-mysql/usecases/port"
-	"go-cla-mysql/usecases/repository"
+	"go-cla-practice/entities/model"
+	"go-cla-practice/usecases/dto"
+	"go-cla-practice/usecases/port"
+	"go-cla-practice/usecases/repository"
 )
 
 type Todo struct {
