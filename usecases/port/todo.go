@@ -1,8 +1,8 @@
 package port
 
 import (
-	"go-cla-mysql/entities/model"
-	"go-cla-mysql/usecases/dto"
+	"go-cla-practice/entities/model"
+	"go-cla-practice/usecases/dto"
 )
 
 type TodoInputPort interface {
