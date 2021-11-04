@@ -32,7 +32,7 @@ docker-compose exec go make migrate-down
 - セッション管理: Redis
 
 # 環境変数
-- "github.com/joho/godotenv"を使用
+- [github.com/joho/godotenv](https://github.com/joho/godotenv) を使用
 
 # 環境構築
 - [notion](https://fuzzy-hunter-3bf.notion.site/golang-docker-afad7bfb494740b3910834a489452784) に書いて公開してます。
