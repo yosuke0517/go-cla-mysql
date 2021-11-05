@@ -9,6 +9,7 @@ interactorはアウトプットポートに依存し(importするということ
 
 import (
 	"go-cla-practice/entities/model"
+	"go-cla-practice/usecases/dto"
 	"go-cla-practice/usecases/port"
 	"go-cla-practice/usecases/repository"
 	"net/http"
@@ -27,19 +28,17 @@ func NewTodoInputPort(outputPort port.TodoOutputPort, todoRepository repository.
 	}
 }
 
-func (t *Todo) Create(writer http.ResponseWriter, todo *model.Todo) {
-	_, err := t.TodoRepo.Create(todo)
+func (t *Todo) Create(todo *model.Todo) (bool, error) {
+	isCreate, err := t.TodoRepo.Create(todo)
 	if err != nil {
-		t.OutputPort.RenderError(writer, err)
+		return isCreate, err
 	}
-	var todos model.Todos
-	todos = append(todos, *todo)
-	t.OutputPort.Render(writer, &todos)
+	return isCreate, err
 }
 
 // FindAll usecase.UserInputPortを実装している
 // FindAll は，TodoRepo.GetUserByIDを呼び出し，dtoに詰めて呼び出し元（controller）へ返します。
-func (t *Todo) FindAll(writer http.ResponseWriter, max int) {
+func (t *Todo) FindAll(max int) {
 	// maxの設定
 	const maxLimit int = 10
 	todos, err := t.TodoRepo.FindAll(maxLimit)
@@ -49,7 +48,7 @@ func (t *Todo) FindAll(writer http.ResponseWriter, max int) {
 	t.OutputPort.Render(writer, todos)
 }
 
-func (t *Todo) FindByID(writer http.ResponseWriter, id int) {
+func (t *Todo) FindByID(id int) {
 	todos, err := t.TodoRepo.FindByID(id)
 	if err != nil {
 		t.OutputPort.RenderError(writer, err)
@@ -57,7 +56,7 @@ func (t *Todo) FindByID(writer http.ResponseWriter, id int) {
 	t.OutputPort.Render(writer, todos)
 }
 
-func (t *Todo) Update(writer http.ResponseWriter, todo *model.Todo) {
+func (t *Todo) Update(todo *model.Todo) {
 	_, err := t.TodoRepo.Update(todo)
 	if err != nil {
 		t.OutputPort.RenderError(writer, err)
