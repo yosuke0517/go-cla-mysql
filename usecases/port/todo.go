@@ -2,13 +2,14 @@ package port
 
 import (
 	"go-cla-practice/entities/model"
+	"go-cla-practice/usecases/dto"
 )
 
 type TodoInputPort interface {
-	Create(todo *model.Todo)
-	FindAll(max int)
-	FindByID(id int)
-	Update(todo *model.Todo)
+	Create(todo *model.Todo) (bool, error)
+	FindAll(max int) (dto.TodoOutPutUseCaseDto, error)
+	FindByID(id int) (dto.TodoOutPutUseCaseDto, error)
+	Update(todo *model.Todo) (bool, error)
 }
 
 // TodoOutputPort この中で共通のレスポンス処理を呼ぶ
