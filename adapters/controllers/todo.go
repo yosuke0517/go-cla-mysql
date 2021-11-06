@@ -41,7 +41,11 @@ func (t *TodoHandler) GetOne() http.HandlerFunc {
 		if err != nil {
 			presenter.BadRequest(writer, fmt.Sprintf("parameter invalid! cause: %s", err))
 		}
-		res, err := t.todoInputPort.FindByID(writer, id)
+		res, err := t.todoInputPort.FindByID(id)
+		if err != nil {
+			presenter.InternalServerError(writer, "InternalServerError: "+err.Error())
+		}
+		presenter.Success(writer, res)
 	}
 }
 
