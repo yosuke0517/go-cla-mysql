@@ -26,7 +26,7 @@ func NewTodoHandler(todoInputPort port.TodoInputPort) TodoHandler {
 // GetAll は，httpを受け取り，portを組み立てて，inputPort.FindAllを呼び出します．
 func (t *TodoHandler) GetAll() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
-		t.todoInputPort.FindAll(writer, 10)
+		res, err := t.todoInputPort.FindAll(writer, 10)
 	}
 }
 
@@ -37,7 +37,7 @@ func (t *TodoHandler) GetOne() http.HandlerFunc {
 		if err != nil {
 			presenter.BadRequest(writer, fmt.Sprintf("parameter invalid! cause: %s", err))
 		}
-		t.todoInputPort.FindByID(writer, id)
+		res, err := t.todoInputPort.FindByID(writer, id)
 	}
 }
 
@@ -49,7 +49,11 @@ func (t *TodoHandler) Create() http.HandlerFunc {
 			return
 		}
 		// TODO validation追加
-		t.todoInputPort.Create(writer, data)
+		res, err := t.todoInputPort.Create(data)
+		if err != nil {
+			presenter.InternalServerError(writer, "InternalServerError: "+err.Error())
+		}
+		presenter.Success(writer, res)
 	}
 }
 
@@ -61,6 +65,6 @@ func (t *TodoHandler) Update() http.HandlerFunc {
 			return
 		}
 		// TODO validation追加
-		t.todoInputPort.Update(writer, data)
+		res, err := t.todoInputPort.Update(writer, data)
 	}
 }
