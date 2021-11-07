@@ -14,3 +14,14 @@ func NewTodoOutPutUseCaseDto(hits int, todos []model.Todo) *TodoOutPutUseCaseDto
 		Todos: todos,
 	}
 }
+
+// TODO 名前なんとかする
+type TodoOutPutUseCaseDto2 struct {
+	IsSuccess bool `json:"isSuccess"`
+}
+
+func NewTodoOutPutUseCaseDto2(isSuccess bool) *TodoOutPutUseCaseDto2 {
+	return &TodoOutPutUseCaseDto2{
+		IsSuccess: isSuccess,
+	}
+}
