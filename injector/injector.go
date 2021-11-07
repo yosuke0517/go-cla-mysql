@@ -3,7 +3,6 @@ package injector
 import (
 	"go-cla-practice/adapters/controllers"
 	"go-cla-practice/adapters/gateway"
-	"go-cla-practice/adapters/presenter"
 	"go-cla-practice/infratructure/db"
 	"go-cla-practice/usecases/interactor"
 	"go-cla-practice/usecases/port"
@@ -20,14 +19,9 @@ func InjectTodoGateway() repository.TodoRepository {
 	return gateway.NewTodoGateway(sqlHandler)
 }
 
-func InjectOutPutPort() port.TodoOutputPort {
-	return presenter.NewTodoOutputPort()
-}
-
 func InjectInputPort() port.TodoInputPort {
-	OutPutPort := InjectOutPutPort()
 	TodoRepo := InjectTodoGateway()
-	return interactor.NewTodoInputPort(OutPutPort, TodoRepo)
+	return interactor.NewTodoInputPort(TodoRepo)
 }
 
 func InjectTodoHandler() controllers.TodoHandler {
