@@ -12,56 +12,58 @@ import (
 	"go-cla-practice/usecases/dto"
 	"go-cla-practice/usecases/port"
 	"go-cla-practice/usecases/repository"
-	"net/http"
 )
 
 type Todo struct {
-	OutputPort port.TodoOutputPort
-	TodoRepo   repository.TodoRepository
+	TodoRepo repository.TodoRepository
 }
 
 // NewTodoInputPort はUserInputPortを取得します．（controllerで使用）
-func NewTodoInputPort(outputPort port.TodoOutputPort, todoRepository repository.TodoRepository) port.TodoInputPort {
+func NewTodoInputPort(todoRepository repository.TodoRepository) port.TodoInputPort {
 	return &Todo{
-		OutputPort: outputPort,
-		TodoRepo:   todoRepository,
+		TodoRepo: todoRepository,
 	}
 }
 
-func (t *Todo) Create(todo *model.Todo) (bool, error) {
+func (t *Todo) Create(todo *model.Todo) (*dto.TodoOutPutUseCaseDto2, error) {
 	isCreate, err := t.TodoRepo.Create(todo)
+	var result = dto.NewTodoOutPutUseCaseDto2(isCreate)
 	if err != nil {
-		return isCreate, err
+		return result, err
 	}
-	return isCreate, err
+	return result, err
 }
 
 // FindAll usecase.UserInputPortを実装している
 // FindAll は，TodoRepo.GetUserByIDを呼び出し，dtoに詰めて呼び出し元（controller）へ返します。
-func (t *Todo) FindAll(max int) {
+func (t *Todo) FindAll(max int) (*dto.TodoOutPutUseCaseDto, error) {
 	// maxの設定
 	const maxLimit int = 10
 	todos, err := t.TodoRepo.FindAll(maxLimit)
+	var hits = len(*todos)
+	var todoOutPutUseCaseDto = dto.NewTodoOutPutUseCaseDto(hits, *todos)
 	if err != nil {
-		t.OutputPort.RenderError(writer, err)
+		return nil, err
 	}
-	t.OutputPort.Render(writer, todos)
+	return todoOutPutUseCaseDto, err
 }
 
-func (t *Todo) FindByID(id int) {
+func (t *Todo) FindByID(id int) (*dto.TodoOutPutUseCaseDto, error) {
 	todos, err := t.TodoRepo.FindByID(id)
+	var hits = len(*todos)
+	var todoOutPutUseCaseDto = dto.NewTodoOutPutUseCaseDto(hits, *todos)
 	if err != nil {
-		t.OutputPort.RenderError(writer, err)
+		return nil, err
 	}
-	t.OutputPort.Render(writer, todos)
+	return todoOutPutUseCaseDto, err
 }
 
-func (t *Todo) Update(todo *model.Todo) {
-	_, err := t.TodoRepo.Update(todo)
+func (t *Todo) Update(todo *model.Todo) (*dto.TodoOutPutUseCaseDto2, error) {
+	isUpdated, err := t.TodoRepo.Update(todo)
+	var result = dto.NewTodoOutPutUseCaseDto2(isUpdated)
 	if err != nil {
-		t.OutputPort.RenderError(writer, err)
+
+		return result, err
 	}
-	var todos model.Todos
-	todos = append(todos, *todo)
-	t.OutputPort.Render(writer, &todos)
+	return result, err
 }
