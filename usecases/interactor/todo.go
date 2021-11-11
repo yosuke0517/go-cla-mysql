@@ -39,8 +39,13 @@ func (t *Todo) Create(todo *model.Todo) (*dto.TodoOutPutUseCaseDto2, error) {
 func (t *Todo) FindAll(max int) (*dto.TodoOutPutUseCaseDto, error) {
 	// maxの設定
 	const maxLimit int = 10
+	var hits int
 	todos, err := t.TodoRepo.FindAll(maxLimit)
-	var hits = len(*todos)
+	if todos == nil {
+		hits = 0
+	} else {
+		hits = len(*todos)
+	}
 	var todoOutPutUseCaseDto = dto.NewTodoOutPutUseCaseDto(hits, *todos)
 	if err != nil {
 		return nil, err
